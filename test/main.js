@@ -29,8 +29,8 @@
 
 	if (typeof process == 'undefined' && typeof window == 'undefined') {
 		// give web workers a chance
-		WAIT_FOR_NORMAL_CASE = 1000;
-		WAIT_FOR_ERRORS = 1000;
+		NORMAL_WAIT = 1000;
+		ERROR_WAIT = 1000;
 	}
 
 
