@@ -1,7 +1,7 @@
-import { schedule } from 'stack';
+import { scheduleTask } from 'stack';
 
 export default function briskit( callback , arg ) {
-	schedule( callback , arg );
+	scheduleTask( callback , arg );
 }
 
 

@@ -1,6 +1,6 @@
-export var $global = this;
-export var $Array = Array;
 export var $UNDEFINED;
+export var $global = (typeof global != '' + $UNDEFINED ? global : window);
+export var $Array = Array;
 
 
 
