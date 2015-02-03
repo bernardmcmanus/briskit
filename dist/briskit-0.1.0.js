@@ -1,4 +1,4 @@
-/*! briskit - 0.1.0 - Bernard McManus - master - bc8ae66 - 2015-02-03 */
+/*! briskit - 0.1.0 - Bernard McManus - dev - gcaaecb - 2015-02-04 */
 
 (function() {
     "use strict";
@@ -109,12 +109,7 @@
         })();
     }
 
-    function main$$briskit( callback , arg ) {
-        stack$$scheduleTask( callback , arg );
-    }
-
-    var main$$default = main$$briskit;
-    var $$index$$default = main$$default;
+    var $$index$$default = stack$$scheduleTask;
 
     if (typeof define == 'function' && define.amd) {
         define([], function() { return $$index$$default });

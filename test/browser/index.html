@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <!-- ============================================= -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>briskit | automated browser tests</title>
+    <!-- ============================================= -->
+    <link rel="stylesheet" href="file://[PROJECT_ROOT]/node_modules/mocha/mocha.css">
+    <script src="file://[PROJECT_ROOT]/node_modules/requirejs/require.js"></script>
+    <!-- ============================================= -->
+  </head>
+  <body>
+    <div id="mocha"></div>
+  </body>
+  <script>
+
+    // define some necessary test stuff
+    window.module = {};
+    // window.Uint8ClampedArray = window.Uint8ClampedArray || function(){};
+
+    Object.defineProperty( window , 'exports' , {
+      get: function() {
+        return module.exports;
+      }
+    });
+
+    require.config({
+      paths: {
+        'mocha': 'file://[PROJECT_ROOT]/node_modules/mocha/mocha',
+        'chai': 'file://[PROJECT_ROOT]/node_modules/chai/chai',
+        'domain': 'file://[PROJECT_ROOT]/test/browser/domain',
+        'zone': 'file://[PROJECT_ROOT]/bower_components/zone/zone',
+        'briskit': 'file://[PROJECT_ROOT]/dist/briskit-0.1.0',
+        'tests': 'file://[PROJECT_ROOT]/test/common/tests'
+      },
+      shim: {
+        'zone': { exports: 'zone' },
+        'mocha': { exports: 'mocha' },
+        'chai': { exports: 'chai' },
+        'tests': [ 'mocha' , 'chai' , 'domain' , 'zone' , 'briskit' ]
+      }
+    });
+
+    define( 'init' , [ 'mocha' ], function( mocha , chai ) {
+      mocha.setup( 'bdd' );
+      mocha.reporter( 'html' );
+    });
+
+    require([ 'init' , 'tests' ], function() {
+      var briskit = require( 'briskit' );
+      describe( 'browser' , function() {
+        window.exports( briskit );
+      });
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+    });
+  </script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
