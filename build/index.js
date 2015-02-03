@@ -1,2 +1,2 @@
-import briskit from 'main';
-export default briskit;
+import { scheduleTask } from 'stack';
+export default scheduleTask;
