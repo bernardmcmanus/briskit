@@ -249,6 +249,15 @@ module.exports = function( grunt ) {
 	});
 
 
+	grunt.registerTask( 'bower:install' , function() {
+		var done = this.async();
+		cp.exec( 'bower install' , function( err , stdout , stderr ) {
+			util.puts( err ? err: stdout );
+			done();
+		});
+	});
+
+
 	grunt.registerTask( 'git' , [
 		'git-describe',
 		'git-hash',
@@ -321,6 +330,7 @@ module.exports = function( grunt ) {
 		'jshint',
 		'import-clean',
 		'build:common-dev',
+		'bower:install',
 		'runTests'
 	]);
 

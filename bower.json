@@ -1,18 +1,21 @@
 {
 	"name": "briskit",
 	"version": "0.1.0",
-	"homepage": "https://github.com/elnarddogg/briskit.git",
-	"authors": [
-		"Bernard McManus"
-	],
 	"description": "High-priority asynchronous task queue",
 	"main": "dist/briskit-0.1.0.min.js",
+	"devDependencies": {
+		"zone": "~0.3.0"
+	},
 	"keywords": [
 		"event",
 		"task",
 		"queue",
 		"async",
 		"asynchronous"
+	],
+	"homepage": "https://github.com/elnarddogg/briskit.git",
+	"authors": [
+		"Bernard McManus"
 	],
 	"license": "MIT",
 	"ignore": [

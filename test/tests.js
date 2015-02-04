@@ -3,35 +3,24 @@
 
 	'use strict';
 
-	var path = require( 'path' );
-	var fs = require( 'fs-extra' );
-	var util = require( 'util' );
-	var chai = require( 'chai' );
-	var colors = require( 'colors' );
 	var domain = require( 'domain' );
+	var mocha = require( 'mocha' );
+	var chai = require( 'chai' );
+	//var briskit = require( 'briskit' );
+	var briskit = require( '/Users/bmcmanus/asap-lite/dist/briskit-0.1.0' );
 	var expect = chai.expect;
 
-	var pkg = fs.readJsonSync(
-		path.resolve( __dirname , '../package.json' )
-	);
 
-	var briskit = require(
-		path.resolve( __dirname , '..' , pkg.main )
-	);
-
-
-	var IS_NODE = typeof exports == 'object';
 	var MAX_RECURSION = 10;
 	var NORMAL_WAIT = 10;
 	var ERROR_WAIT = 10;
-	var TAB = '      ';
 
 
-	/*if (typeof process == 'undefined' && typeof window == 'undefined') {
-		// give web workers a chance
-		NORMAL_WAIT = 1000;
-		ERROR_WAIT = 1000;
-	}*/
+	if (typeof process == 'undefined' && typeof window._phantom == 'undefined') {
+		// give workers a chance
+		NORMAL_WAIT = 200;
+		ERROR_WAIT = 200;
+	}
 
 
 	describe( 'general' , function() {
@@ -43,30 +32,6 @@
 				done();
 			});
 			expect( called ).to.not.be.ok;
-		});
-
-		it( 'should use setImmediate when running in node' , function ( done ) {
-			var called = false, ticked = false;
-			if (IS_NODE) {
-				setTimeout(function() {
-					if (ticked) {
-						expect( called ).to.be.ok;
-					}
-					else {
-						console.log(( TAB + 'WARNING: failed to execute tick before timeout' ).yellow );
-					}
-					done();
-				}, 1);
-				setImmediate(function() {
-					ticked = true;
-				});
-				briskit(function () {
-					called = true;
-				});
-			}
-			else {
-				done();
-			}
 		});
 
 		it( 'should maintain task order' , function ( done ) {

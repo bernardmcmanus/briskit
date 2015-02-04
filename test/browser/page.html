@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<!-- ============================================= -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>briskit | automated browser tests</title>
+		<!-- ============================================= -->
+		<link rel="stylesheet" href="file:///Users/bmcmanus/asap-lite/node_modules/mocha/mocha.css">
+		<script src="file:///Users/bmcmanus/asap-lite/node_modules/requirejs/require.js"></script>
+		<!-- ============================================= -->
+	</head>
+	<body>
+		<div id="mocha"></div>
+	</body>
+	<script>
+		require.config({
+			paths: {
+				'mocha': 'file:///Users/bmcmanus/asap-lite/node_modules/mocha/mocha',
+				'chai': 'file:///Users/bmcmanus/asap-lite/node_modules/chai/chai',
+				'domain': 'domain',
+				'zone': 'file:///Users/bmcmanus/asap-lite/bower_components/zone/zone',
+				'briskit': 'file:///Users/bmcmanus/asap-lite/dist/briskit-0.1.0',
+				'tests': 'file:///Users/bmcmanus/asap-lite/test/tests'
+			},
+			shim: {
+				'zone': { exports: 'zone' },
+				'mocha': { exports: 'mocha' },
+				'chai': { exports: 'chai' },
+				'tests': [ 'mocha' , 'chai' , 'domain' , 'zone' , 'briskit' ]
+			}
+		});
+
+		define( 'init' , [ 'mocha' ], function( mocha , chai ) {
+			mocha.setup( 'bdd' );
+			mocha.reporter( 'html' );
+		});
+
+		require([ 'init' , 'tests' ], function() {
+			if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+			else { mocha.run(); }
+		});
+	</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
