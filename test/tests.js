@@ -6,8 +6,8 @@
 	var domain = require( 'domain' );
 	var mocha = require( 'mocha' );
 	var chai = require( 'chai' );
-	//var briskit = require( 'briskit' );
-	var briskit = require( '/Users/bmcmanus/asap-lite/dist/briskit-0.1.0' );
+	var briskit = require( 'briskit' );
+	//var briskit = require( '/Users/bmcmanus/asap-lite/dist/briskit-0.1.0' );
 	var expect = chai.expect;
 
 
@@ -16,7 +16,7 @@
 	var ERROR_WAIT = 10;
 
 
-	if (typeof process == 'undefined' && typeof window._phantom == 'undefined') {
+	if (typeof process == 'undefined' && typeof window._phantom != 'undefined') {
 		// give workers a chance
 		NORMAL_WAIT = 200;
 		ERROR_WAIT = 200;

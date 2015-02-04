@@ -4,10 +4,9 @@
 	"description": "High-priority asynchronous task queue",
 	"main": "dist/briskit-0.1.0.js",
 	"scripts": {
-		"test": "npm run test-node",
+		"test": "npm run test-node; npm run test-browser",
 		"test-node": "mocha test/main.js",
-		"test-browser": "node test/browser/run",
-		"test-mpjs": "mocha-phantomjs test/browser/page.html"
+		"test-browser": "mocha-phantomjs test/browser/page.html"
 	},
 	"devDependencies": {
 		"fs-extra": ">=0.9.1",
