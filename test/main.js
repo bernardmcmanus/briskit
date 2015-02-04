@@ -20,18 +20,48 @@
 	);
 
 
+	var TAB = new Array( 8 ).join( ' ' );
+
+
+	describe( 'node.js' , function() {
+
+		describe( 'platform-specific' , function() {
+
+			it( 'should use setImmediate when running in node' , function ( done ) {
+				var called = false, ticked = false;
+				setTimeout(function() {
+					if (ticked) {
+						expect( called ).to.be.ok;
+					}
+					else {
+						console.log(( TAB + 'WARNING: failed to execute tick before timeout' ).yellow );
+					}
+					done();
+				}, 1);
+				setImmediate(function() {
+					ticked = true;
+				});
+				briskit(function () {
+					called = true;
+				});
+			});
+			
+		});
+
+		require( './tests' )( briskit );
+
+	});
+
+
+	return;
+
+
 	var IS_NODE = typeof exports == 'object';
 	var MAX_RECURSION = 10;
 	var NORMAL_WAIT = 10;
 	var ERROR_WAIT = 10;
 	var TAB = '      ';
 
-
-	/*if (typeof process == 'undefined' && typeof window == 'undefined') {
-		// give web workers a chance
-		NORMAL_WAIT = 1000;
-		ERROR_WAIT = 1000;
-	}*/
 
 
 	describe( 'general' , function() {

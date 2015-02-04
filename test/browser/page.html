@@ -13,6 +13,17 @@
 		<div id="mocha"></div>
 	</body>
 	<script>
+
+		// define some necessary test stuff
+		window.module = {};
+		//window.Uint8ClampedArray = function(){};
+
+		Object.defineProperty( window , 'exports' , {
+			get: function() {
+				return module.exports;
+			}
+		});
+
 		require.config({
 			paths: {
 				'mocha': 'file:///Users/bmcmanus/asap-lite/node_modules/mocha/mocha',
@@ -36,6 +47,10 @@
 		});
 
 		require([ 'init' , 'tests' ], function() {
+			var briskit = require( 'briskit' );
+			describe( 'browser' , function() {
+				window.exports( briskit );
+			});
 			if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
 			else { mocha.run(); }
 		});
