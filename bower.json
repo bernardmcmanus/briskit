@@ -1,8 +1,8 @@
 {
   "name": "briskit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "High-priority asynchronous task queue",
-  "main": "dist/briskit-0.1.0.min.js",
+  "main": "dist/briskit-0.1.1.min.js",
   "devDependencies": {
     "zone": "~0.3.0"
   },
