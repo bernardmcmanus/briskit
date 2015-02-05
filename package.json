@@ -1,60 +1,60 @@
 {
-	"name": "briskit",
-	"version": "0.1.0",
-	"description": "High-priority asynchronous task queue",
-	"main": "dist/briskit-0.1.0.js",
-	"scripts": {
-		"test": "npm run test-node; npm run test-browser",
-		"test-node": "mocha test/node",
-		"test-browser": "bower install; npm run test-browser-build; mocha-phantomjs test/browser/tmp/index.html; npm run test-browser-clean",
-		"test-browser-build": "node test/browser/harness build",
-		"test-browser-clean": "node test/browser/harness clean"
-	},
-	"devDependencies": {
-		"fs-extra": ">=0.9.1",
-		"colors": "~1.0.3",
-		"es6-promise": "~2.0.1",
-		"mocha": "~1.21.4",
-		"chai": "~1.9.1",
-		"phantomjs": "~1.9.9",
-		"mocha-phantomjs": "~3.5.3",
-		"zone": "~0.3.0",
-		"requirejs": "~2.1.15",
-		"grunt": "~0.4.2",
-		"grunt-contrib-jshint": "~0.6.3",
-		"grunt-contrib-concat": ">=0.4.0",
-		"grunt-contrib-uglify": ">=0.2.2",
-		"grunt-contrib-clean": ">=0.4.1",
-		"grunt-replace": ">=0.7.7",
-		"grunt-git-describe": "~2.0.2",
-		"grunt-contrib-watch": ">=0.6.1",
-		"grunt-import-clean": ">=0.1.0",
-		"es6-module-transpiler": ">=0.9.0",
-		"es6-module-transpiler-amd-formatter": ">=0.0.1",
-		"grunt-es6-module-transpiler": ">=0.6.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/elnarddogg/briskit.git"
-	},
-	"keywords": [
-		"event",
-		"task",
-		"queue",
-		"async",
-		"asynchronous"
-	],
-	"author": {
-		"name": "Bernard McManus",
-		"email": "bernard.mcmanus.iv@gmail.com",
-		"url": "http://github.com/elnarddogg"
-	},
-	"license": {
-		"type": "MIT",
-		"url": "https://github.com/elnarddogg/briskit/blob/master/LICENSE.txt"
-	},
-	"bugs": {
-		"url": "https://github.com/elnarddogg/briskit/issues"
-	},
-	"homepage": "https://github.com/elnarddogg/briskit"
+  "name": "briskit",
+  "version": "0.1.0",
+  "description": "High-priority asynchronous task queue",
+  "main": "dist/briskit-0.1.0.js",
+  "scripts": {
+    "test": "npm run test-node; npm run test-browser",
+    "test-node": "mocha test/node",
+    "test-browser": "bower install; npm run test-browser-build; mocha-phantomjs test/browser/tmp/index.html; npm run test-browser-clean",
+    "test-browser-build": "node test/browser/harness build",
+    "test-browser-clean": "node test/browser/harness clean"
+  },
+  "devDependencies": {
+    "fs-extra": ">=0.9.1",
+    "colors": "~1.0.3",
+    "es6-promise": "~2.0.1",
+    "mocha": "~1.21.4",
+    "chai": "~1.9.1",
+    "phantomjs": "~1.9.9",
+    "mocha-phantomjs": "~3.5.3",
+    "zone": "~0.3.0",
+    "requirejs": "~2.1.15",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-concat": ">=0.4.0",
+    "grunt-contrib-uglify": ">=0.2.2",
+    "grunt-contrib-clean": ">=0.4.1",
+    "grunt-replace": ">=0.7.7",
+    "grunt-git-describe": "~2.0.2",
+    "grunt-contrib-watch": ">=0.6.1",
+    "grunt-import-clean": ">=0.1.0",
+    "es6-module-transpiler": ">=0.9.0",
+    "es6-module-transpiler-amd-formatter": ">=0.0.1",
+    "grunt-es6-module-transpiler": ">=0.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/elnarddogg/briskit.git"
+  },
+  "keywords": [
+    "event",
+    "task",
+    "queue",
+    "async",
+    "asynchronous"
+  ],
+  "author": {
+    "name": "Bernard McManus",
+    "email": "bernard.mcmanus.iv@gmail.com",
+    "url": "http://github.com/elnarddogg"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/elnarddogg/briskit/blob/master/LICENSE.txt"
+  },
+  "bugs": {
+    "url": "https://github.com/elnarddogg/briskit/issues"
+  },
+  "homepage": "https://github.com/elnarddogg/briskit"
 }
