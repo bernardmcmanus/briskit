@@ -5,8 +5,10 @@
 	"main": "dist/briskit-0.1.0.js",
 	"scripts": {
 		"test": "npm run test-node; npm run test-browser",
-		"test-node": "mocha test/main.js",
-		"test-browser": "mocha-phantomjs test/browser/page.html"
+		"test-node": "mocha test/node",
+		"test-browser": "bower install; npm run test-browser-build; mocha-phantomjs test/browser/tmp/index.html; npm run test-browser-clean",
+		"test-browser-build": "node test/browser/harness build",
+		"test-browser-clean": "node test/browser/harness clean"
 	},
 	"devDependencies": {
 		"fs-extra": ">=0.9.1",

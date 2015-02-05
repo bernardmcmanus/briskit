@@ -15,9 +15,8 @@ module.exports = (function() {
 		var ERROR_WAIT = 10;
 
 
-		//if (typeof process == 'undefined' && typeof window._phantom != 'undefined') {
 		if (typeof window != 'undefined') {
-			// give workers a chance
+			// give phantom a chance
 			NORMAL_WAIT = 200;
 			ERROR_WAIT = 200;
 		}

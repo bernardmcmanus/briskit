@@ -20,19 +20,15 @@ var setImmediate = (function() {
 
 export var scheduleFlush = (function() {
 	if (setImmediate) {
-		//console.log('nextTick');
 		return nextTick( flush );
 	}
 	else if (MutationObserver) {
-		//console.log('observer');
 		return observer( flush );
 	}
 	else if (MessageChannel) {
-		//console.log('channel');
 		return channel( flush );
 	}
 	else {
-		//console.log('timeout');
 		return timeout( flush );
 	}
 }());

@@ -1,4 +1,4 @@
-/*! briskit - 0.1.0 - Bernard McManus - dev - g8ecff4 - 2015-02-04 */
+/*! briskit - 0.1.0 - Bernard McManus - dev - gcaaecb - 2015-02-04 */
 
 (function() {
     "use strict";
@@ -25,19 +25,15 @@
 
     var async$$scheduleFlush = (function() {
         if (async$$setImmediate) {
-            //console.log('nextTick');
             return async$$nextTick( stack$$flush );
         }
         else if (async$$MutationObserver) {
-            //console.log('observer');
             return async$$observer( stack$$flush );
         }
         else if (async$$MessageChannel) {
-            //console.log('channel');
             return async$$channel( stack$$flush );
         }
         else {
-            //console.log('timeout');
             return async$$timeout( stack$$flush );
         }
     }());
