@@ -1,4 +1,4 @@
-/*! briskit - 0.1.3 - Bernard McManus - master - g2761e3 - 2015-03-08 */
+/*! briskit - 0.1.4 - Bernard McManus - master - g4ea310 - 2015-03-08 */
 
 (function() {
     "use strict";

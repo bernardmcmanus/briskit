@@ -1,6 +1,6 @@
 module.exports = function( grunt ) {
 
-
+  var path = require( 'path' );
   var fs = require( 'fs-extra' );
   var cp = require( 'child_process' );
   var util = require( 'util' );
@@ -191,18 +191,14 @@ module.exports = function( grunt ) {
 
 
   grunt.registerTask( 'git-hash' , function() {
-
     grunt.task.requires( 'git-describe' );
-
     var rev = grunt.config.get( 'git-version' );
     var matches = rev.match( /\-?([A-Za-z0-9]{7})\-?/ );
-
     var hash = matches
       .filter(function( match ) {
         return match.length === 7;
       })
       .pop();
-
     if (matches && matches.length > 1) {
       grunt.config.set( 'git-hash' , hash );
     }
@@ -223,6 +219,23 @@ module.exports = function( grunt ) {
         grunt.config.set( 'git-branch' , branch );
       }
       done();
+    });
+  });
+
+
+  grunt.registerTask( 'build:dist' , function() {
+    var pkg = fs.readJsonSync( path.join( __dirname ,  'package.json' ));
+    var bower = fs.readJsonSync( path.join( __dirname ,  'bower.json' ));
+    var re = /-(\d|\.)*(?=(\.min)?\.js)/;
+    [
+      pkg.main,
+      bower.main
+    ]
+    .forEach(function( src ) {
+      src = path.join( __dirname , src );
+      var dest = src.replace( re , '' );
+      console.log( src + ' -> ' + dest );
+      fs.copySync( src , dest );
     });
   });
 
@@ -281,7 +294,8 @@ module.exports = function( grunt ) {
     'git',
     'clean:dist',
     //'build:amd',
-    'build:common'
+    'build:common',
+    'build:dist'
   ]);
 
 
