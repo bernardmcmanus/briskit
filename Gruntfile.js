@@ -233,9 +233,7 @@ module.exports = function( grunt ) {
     ]
     .forEach(function( src ) {
       src = path.join( __dirname , src );
-      var dest = src.replace( re , '' );
-      console.log( src + ' -> ' + dest );
-      fs.copySync( src , dest );
+      fs.copySync( src , src.replace( re , '' ));
     });
   });
 
