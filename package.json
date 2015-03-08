@@ -1,12 +1,12 @@
 {
   "name": "briskit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "High-priority asynchronous task queue",
-  "main": "dist/briskit-0.1.1.js",
+  "main": "dist/briskit-0.1.2.js",
   "scripts": {
     "test": "npm run test-node; npm run test-browser",
     "test-node": "mocha test/node",
-    "test-browser": "bower install; npm run test-browser-build; mocha-phantomjs test/browser/tmp/index.html; npm run test-browser-clean",
+    "test-browser": "bower install; npm run test-browser-build; mocha-phantomjs test/browser/tmp/index.html",
     "test-browser-build": "node test/browser/harness build",
     "test-browser-clean": "node test/browser/harness clean"
   },

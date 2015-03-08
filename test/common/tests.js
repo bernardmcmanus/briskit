@@ -22,6 +22,11 @@ module.exports = (function() {
     }
 
 
+    before(function() {
+      // override console.error so we don't get a bunch of messy output
+      console.error = function(){};
+    });
+
     describe( 'general' , function() {
 
       it( 'should call a task in the future' , function ( done ) {

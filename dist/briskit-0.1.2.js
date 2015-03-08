@@ -1,4 +1,4 @@
-/*! briskit - 0.1.1 - Bernard McManus - master - gfafaf2 - 2015-02-04 */
+/*! briskit - 0.1.2 - Bernard McManus - master - g5fd34e - 2015-03-08 */
 
 (function() {
     "use strict";
@@ -103,8 +103,10 @@
     function stack$$scheduleError( err ) {
       stack$$errors.push( err );
       async$$timeout(function() {
-        if (stack$$errors.length) {
-          throw stack$$errors.shift();
+        var err = stack$$errors.shift();
+        if (err !== static$$$UNDEFINED) {
+          console.error( err.stack || err );
+          throw err;
         }
       })();
     }

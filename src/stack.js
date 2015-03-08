@@ -36,8 +36,10 @@ export function scheduleTask( cb , arg ) {
 export function scheduleError( err ) {
   errors.push( err );
   timeout(function() {
-    if (errors.length) {
-      throw errors.shift();
+    var err = errors.shift();
+    if (err !== $UNDEFINED) {
+      console.error( err.stack || err );
+      throw err;
     }
   })();
 }
