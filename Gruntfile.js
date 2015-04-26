@@ -5,46 +5,36 @@ module.exports = function( grunt ) {
   var cp = require( 'child_process' );
   var util = require( 'util' );
   var Promise = require( 'es6-promise' ).Promise;
-  var colors = require( 'colors' );
-  var AMDFormatter = require( 'es6-module-transpiler-amd-formatter' );
-  var transpiler = require( 'es6-module-transpiler' );
-  var Container = transpiler.Container;
-  var FileResolver = transpiler.FileResolver;
-  var BundleFormatter = transpiler.formatters.bundle;
-
-
-  var SRC = 'src/*.js';
-
 
   grunt.initConfig({
 
     pkg: grunt.file.readJSON( 'package.json' ),
 
-    'git-describe': {
-      'options': {
-        prop: 'git-version'
-      },
-      dist: {}
-    },
+    gitinfo: {},
 
     jshint: {
-      all: [ 'Gruntfile.js' , SRC ],
+      all: [ 'Gruntfile.js' , '<%= pkg.config.src %>' ],
       options: {
         esnext: true
       }
     },
 
     'import-clean': {
-      all: SRC
+      all: '<%= pkg.config.src %>'
     },
 
     clean: {
       'dist': [ 'dist' ],
       'tmp': [ 'tmp' ],
       'common-dev': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.js' ],
-      'common-prod': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js' ],
-      'amd-dev': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.amd.js' ],
-      'amd-prod': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.amd.min.js' ]
+      'common-prod': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js' ]
+    },
+
+    'release-describe': {
+      build: {
+        src: 'dist/<%= pkg.name %>-<%= pkg.version %>.js',
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      }
     },
 
     replace: {
@@ -88,31 +78,30 @@ module.exports = function( grunt ) {
 
     watch: {
       debug: {
-        files: [ 'Gruntfile.js' , SRC , 'build/*.js' , 'test/*.js' ],
+        files: [ 'Gruntfile.js' , '<%= pkg.config.src %>' , 'build/*.js' , 'test/*.js' ],
+        options: { interrupt: true },
         tasks: [ 'test' ]
       }
     },
 
     transpile: {
-      amd: {
-        type: 'amd',
-        files: [{
-          expand: true,
-          cwd: 'src/',
-          src: [ '**/*.js' ],
-          dest: 'tmp/',
-          ext: '.amd.js'
-        }]
+      common: {
+        src: '<%= pkg.config.src %>',
+        dest: 'tmp/<%= pkg.name %>.common.js',
+        umd: '<%= pkg.config.umd %>',
+        options: {
+          inject: [
+            'Array',
+            'setTimeout',
+            [ '$UNDEFINED' ]
+          ]
+        }
       }
     },
 
     concat: {
       options: {
-        banner: '/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.get( \'git-branch\' ) %> - <%= grunt.config.get( \'git-hash\' ) %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n\n'
-      },
-      amd: {
-        src: 'tmp/**/*.amd.js',
-        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.amd.js'
+        banner: "/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.data.gitinfo.local.branch.current.shortSHA %> - <%= grunt.template.today('yyyy-mm-dd') %> */\n\n"
       },
       common: {
         src: 'tmp/<%= pkg.name %>.common.js',
@@ -122,12 +111,7 @@ module.exports = function( grunt ) {
 
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.get( \'git-branch\' ) %> - <%= grunt.config.get( \'git-hash\' ) %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      amd: {
-        files: {
-          'dist/<%= pkg.name %>-<%= pkg.version %>.amd.min.js': 'tmp/**/*.amd.js'
-        }
+        banner: "/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.data.gitinfo.local.branch.current.shortSHA %> - <%= grunt.template.today('yyyy-mm-dd') %> */\n"
       },
       common: {
         files: {
@@ -138,90 +122,19 @@ module.exports = function( grunt ) {
 
   });
 
+  grunt.loadTasks( 'tasks' );
   
   [
     'grunt-contrib-jshint',
     'grunt-contrib-clean',
-    'grunt-git-describe',
+    'grunt-gitinfo',
     'grunt-replace',
     'grunt-contrib-concat',
     'grunt-contrib-uglify',
     'grunt-contrib-watch',
-    'grunt-es6-module-transpiler',
     'grunt-import-clean'
   ]
   .forEach( grunt.loadNpmTasks );
-
-
-  function transpile( umd , out , formatter ) {
-
-    formatter = formatter || BundleFormatter;
-
-    var container = new Container({
-      resolvers: [new FileResolver([ 'src/' ])],
-      formatter: new formatter()
-    });
-
-    container.getModule( umd );
-    container.write( out );
-
-    modifyTranspiled( out );
-  }
-
-  function modifyTranspiled( out ) {
-
-    var transpiled = fs.readFileSync( out , 'utf-8' );
-
-    // remove sourceMappingURL
-    var sourceMapRegex = /(^.*sourceMappingURL.*\n?$)/mi;
-    transpiled = transpiled.replace( sourceMapRegex , '' );
-
-    // replace multiple line breaks
-    var lbRegex = /\n{2,}/g;
-    transpiled = transpiled.replace( lbRegex , '\n\n' );
-
-    fs.writeFileSync( out , transpiled );
-  }
-
-
-  grunt.registerTask( 'transpile:common' , function() {
-    var name = grunt.config.get( 'pkg.name' );
-    transpile( '../build/' + name + '.umd' , 'tmp/' + name + '.common.js' );
-  });
-
-
-  grunt.registerTask( 'git-hash' , function() {
-    grunt.task.requires( 'git-describe' );
-    var rev = grunt.config.get( 'git-version' );
-    var matches = rev.match( /\-?([A-Za-z0-9]{7})\-?/ );
-    var hash = matches
-      .filter(function( match ) {
-        return match.length === 7;
-      })
-      .pop();
-    if (matches && matches.length > 1) {
-      grunt.config.set( 'git-hash' , hash );
-    }
-    else{
-      grunt.config.set( 'git-hash' , rev );
-    }
-  });
-
-
-  grunt.registerTask( 'git-branch' , function() {
-    var done = this.async();
-    cp.exec( 'git status' , function( err , stdout , stderr ) {
-      if (!err) {
-        var branch = stdout
-          .split( '\n' )
-          .shift()
-          .replace( /on\sbranch\s/i , '' );
-        grunt.config.set( 'git-branch' , branch );
-      }
-      done();
-    });
-  });
-
 
   grunt.registerTask( 'build:dist' , function() {
     var pkg = fs.readJsonSync( path.join( __dirname ,  'package.json' ));
@@ -236,21 +149,6 @@ module.exports = function( grunt ) {
       fs.copySync( src , src.replace( re , '' ));
     });
   });
-
-
-  grunt.registerTask( 'build:describe-prod' , function() {
-    var files = grunt.file.expand( SRC );
-    var pkg = grunt.config.get( 'pkg' );
-    var name = pkg.name + '-' + pkg.version + '.min.js';
-    var bytesInit = files.reduce(function( prev , current ) {
-      return prev + fs.statSync( current ).size;
-    }, 0);
-    var bytesFinal = fs.statSync( 'dist/' + name ).size;
-    var kbInit = (Math.round( bytesInit / 10 ) / 100);
-    var kbFinal = (Math.round( bytesFinal / 10 ) / 100).toString();
-    console.log('File ' + name.cyan + ' created: ' + (kbInit + ' kB').green + ' \u2192 ' + (kbFinal + ' kB').green);
-  });
-
 
   grunt.registerTask( 'runTests' , function() {
     var done = this.async();
@@ -271,37 +169,25 @@ module.exports = function( grunt ) {
     .then( done );
   });
 
-
-  grunt.registerTask( 'git' , [
-    'git-describe',
-    'git-hash',
-    'git-branch'
-  ]);
-
-
   grunt.registerTask( 'default' , [
     'clean',
     'build',
     'replace',
     'test',
-    'build:describe-prod'
+    'release-describe'
   ]);
 
-
   grunt.registerTask( 'build' , [
-    'git',
+    'gitinfo',
     'clean:dist',
-    //'build:amd',
     'build:common',
     'build:dist'
   ]);
-
 
   grunt.registerTask( 'build:common' , [
     'build:common-dev',
     'build:common-prod'
   ]);
-
 
   grunt.registerTask( 'build:common-prod' , [
     'clean:common-prod',
@@ -310,36 +196,12 @@ module.exports = function( grunt ) {
     'clean:tmp'
   ]);
 
-
   grunt.registerTask( 'build:common-dev' , [
     'clean:common-dev',
     'transpile:common',
     'concat:common',
     'clean:tmp'
   ]);
-
-
-  grunt.registerTask( 'build:amd' , [
-    'build:amd-dev',
-    'build:amd-prod'
-  ]);
-
-
-  grunt.registerTask( 'build:amd-prod' , [
-    'clean:amd-prod',
-    'transpile:amd',
-    'uglify:amd',
-    'clean:tmp'
-  ]);
-
-
-  grunt.registerTask( 'build:amd-dev' , [
-    'clean:amd-dev',
-    'transpile:amd',
-    'concat:amd',
-    'clean:tmp'
-  ]);
-
 
   grunt.registerTask( 'test' , [
     'jshint',
@@ -348,27 +210,8 @@ module.exports = function( grunt ) {
     'runTests'
   ]);
 
-
   grunt.registerTask( 'debug' , [
     'test',
     'watch:debug'
   ]);
-
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,9 +1,17 @@
-import { $Array, $UNDEFINED } from 'static';
-import { scheduleFlush, timeout } from 'async';
+import { timeout, getProvider } from 'providers';
 
-export var stack = $Array( 1024 );
+export var stack = Array( 1024 );
 export var length = 0;
 export var errors = [];
+
+export default function scheduleTask( cb , arg ) {
+  stack[length] = cb;
+  stack[length+1] = arg;
+  length += 2;
+  if (length == 2) {
+    getProvider()();
+  }
+}
 
 export function flush() {
   var cb, arg;
@@ -22,17 +30,6 @@ export function flush() {
   length = 0;
 }
 
-export function scheduleTask( cb , arg ) {
-  stack[length] = cb;
-  stack[length+1] = arg;
-  length += 2;
-  if (length == 2) {
-    // this 0 argument does nothing, but the transpiler
-    // throws a syntax error without it
-    scheduleFlush( 0 );
-  }
-}
-
 export function scheduleError( err ) {
   errors.push( err );
   timeout(function() {
@@ -43,22 +40,3 @@ export function scheduleError( err ) {
     }
   })();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

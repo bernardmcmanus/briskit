@@ -27,6 +27,34 @@ module.exports = (function() {
       console.error = function(){};
     });
 
+    describe( '::use' , function() {
+      it( 'should change the async provider if one is passed' , function ( done ) {
+        var provider;
+        if (typeof window != 'undefined') {
+          provider = briskit.providers.nextTick;
+        }
+        else {
+          provider = briskit.providers.observer;
+        }
+        briskit.use( provider );
+        expect(function() {
+          briskit(function(){});
+        }).to.throw;
+        setTimeout(function() {
+          done();
+        });
+      });
+      it( 'should use the best available async provider if nothing is passed' , function ( done ) {
+        briskit.use();
+        expect(function() {
+          briskit(function(){});
+        }).to.not.throw;
+        setTimeout(function() {
+          done();
+        });
+      });
+    });
+
     describe( 'general' , function() {
 
       it( 'should call a task in the future' , function ( done ) {
