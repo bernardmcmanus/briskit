@@ -14,9 +14,9 @@ module.exports = function( grunt ) {
     var data = grunt.task.normalizeMultiTaskFiles( that.data )[0];
     var options = that.options({ inject: [] });
 
-    var src = path.join( CWD , data.orig.src[0].split( path.sep ).shift() );
+    var src = path.join( CWD , path.dirname( data.src[0] ));
     var dest = path.join( CWD , data.dest );
-    var umd = path.join( CWD , data.umd );
+    var index = path.join( CWD , data.index );
 
     // inject these globals into closure for better minification
     var leadingInjectArgs = options.inject.map(function( arg ) {
@@ -24,9 +24,6 @@ module.exports = function( grunt ) {
     });
     var trailingInjectArgs = options.inject.map(function( arg ) {
       return Array.isArray( arg ) ? arg.pop() : arg;
-    })
-    .filter(function( arg ) {
-      return !!arg;
     });
 
     var container = new Container({
@@ -35,7 +32,7 @@ module.exports = function( grunt ) {
     });
 
     fs.ensureDirSync( path.dirname( dest ));
-    container.getModule( umd );
+    container.getModule( index );
     container.write( dest );
 
     var transpiled = fs.readFileSync( dest , 'utf-8' );
@@ -53,4 +50,5 @@ module.exports = function( grunt ) {
 
     fs.writeFileSync( dest , transpiled );
   });
+
 };

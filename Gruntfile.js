@@ -26,55 +26,29 @@ module.exports = function( grunt ) {
     clean: {
       'dist': [ 'dist' ],
       'tmp': [ 'tmp' ],
-      'common-dev': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.js' ],
-      'common-prod': [ 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js' ]
+      'common-dev': [ 'dist/<%= pkg.name %>.js' ],
+      'common-prod': [ 'dist/<%= pkg.name %>.min.js' ]
     },
 
     'release-describe': {
       build: {
-        src: 'dist/<%= pkg.name %>-<%= pkg.version %>.js',
-        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+        src: 'dist/<%= pkg.name %>.js',
+        dest: 'dist/<%= pkg.name %>.min.js'
       }
     },
 
-    replace: {
-      npm: {
-        options: {
-          patterns: [
-            {
-              match: /(\"version\")(.*?)(\")(.{1,}?)(\")/i,
-              replacement: '\"version\": \"<%= pkg.version %>\"'
-            },
-            {
-              match: /(\"main\")(.*?)(\")(.{1,}?)(\")/i,
-              replacement: '\"main\": \"dist/<%= pkg.name %>-<%= pkg.version %>.js\"'
-            }
-          ]
-        },
-        files: [{
-          src: 'package.json',
-          dest: 'package.json'
+    replace: [{
+      options: {
+        patterns: [{
+          match: /(\"version\")(.*?)(\")(.{1,}?)(\")/i,
+          replacement: '\"version\": \"<%= pkg.version %>\"'
         }]
       },
-      bower: {
-        options: {
-          patterns: [
-            {
-              match: /(\"version\")(.*?)(\")(.{1,}?)(\")/i,
-              replacement: '\"version\": \"<%= pkg.version %>\"'
-            },
-            {
-              match: /(\"main\")(.*?)(\")(.{1,}?)(\")/i,
-              replacement: '\"main\": \"dist/<%= pkg.name %>-<%= pkg.version %>.min.js\"'
-            }
-          ]
-        },
-        files: [{
-          src: 'bower.json',
-          dest: 'bower.json'
-        }]
-      }
-    },
+      files: [{
+        src: 'bower.json',
+        dest: 'bower.json'
+      }]
+    }],
 
     watch: {
       debug: {
@@ -88,14 +62,25 @@ module.exports = function( grunt ) {
       common: {
         src: '<%= pkg.config.src %>',
         dest: 'tmp/<%= pkg.name %>.common.js',
-        umd: '<%= pkg.config.umd %>',
-        options: {
-          inject: [
-            'Array',
-            'setTimeout',
-            [ '$UNDEFINED' ]
-          ]
-        }
+        index: '<%= pkg.config.umd %>'
+      },
+      module: {
+        src: '<%= pkg.config.src %>',
+        dest: 'tmp/<%= pkg.name %>.module.js',
+        index: '<%= pkg.config.module %>'        
+      },
+      options: {
+        inject: [
+          'Array',
+          'setTimeout',
+          [ '$UNDEFINED' ]
+        ]
+      }
+    },
+
+    toES6Module: {
+      common: {
+        'dist/<%= pkg.name %>.module.js': 'dist/<%= pkg.name %>.module.js'
       }
     },
 
@@ -105,7 +90,11 @@ module.exports = function( grunt ) {
       },
       common: {
         src: 'tmp/<%= pkg.name %>.common.js',
-        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: 'dist/<%= pkg.name %>.js'
+      },
+      module: {
+        src: 'tmp/<%= pkg.name %>.module.js',
+        dest: 'dist/<%= pkg.name %>.module.js'
       }
     },
 
@@ -115,7 +104,7 @@ module.exports = function( grunt ) {
       },
       common: {
         files: {
-          'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': 'tmp/**/*.js'
+          'dist/<%= pkg.name %>.min.js': 'tmp/**/*.js'
         }
       }
     }
@@ -135,20 +124,6 @@ module.exports = function( grunt ) {
     'grunt-import-clean'
   ]
   .forEach( grunt.loadNpmTasks );
-
-  grunt.registerTask( 'build:dist' , function() {
-    var pkg = fs.readJsonSync( path.join( __dirname ,  'package.json' ));
-    var bower = fs.readJsonSync( path.join( __dirname ,  'bower.json' ));
-    var re = /-(\d|\.)*(?=(\.min)?\.js)/;
-    [
-      pkg.main,
-      bower.main
-    ]
-    .forEach(function( src ) {
-      src = path.join( __dirname , src );
-      fs.copySync( src , src.replace( re , '' ));
-    });
-  });
 
   grunt.registerTask( 'runTests' , function() {
     var done = this.async();
@@ -180,26 +155,10 @@ module.exports = function( grunt ) {
   grunt.registerTask( 'build' , [
     'gitinfo',
     'clean:dist',
-    'build:common',
-    'build:dist'
-  ]);
-
-  grunt.registerTask( 'build:common' , [
-    'build:common-dev',
-    'build:common-prod'
-  ]);
-
-  grunt.registerTask( 'build:common-prod' , [
-    'clean:common-prod',
-    'transpile:common',
-    'uglify:common',
-    'clean:tmp'
-  ]);
-
-  grunt.registerTask( 'build:common-dev' , [
-    'clean:common-dev',
-    'transpile:common',
-    'concat:common',
+    'transpile',
+    'concat',
+    'uglify',
+    'toES6Module',
     'clean:tmp'
   ]);
 

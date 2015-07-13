@@ -1,4 +1,4 @@
-/*! briskit - 0.2.0 - Bernard McManus - 5913d2b - 2015-04-26 */
+/*! briskit - 0.2.1 - Bernard McManus - 2b5c46e - 2015-07-12 */
 
 (function(Array,setTimeout,$UNDEFINED) {
     "use strict";
@@ -138,4 +138,4 @@
     else {
       this.briskit = $$index$$default;
     }
-}).apply(this,[Array,setTimeout]);
+}).apply(this,[Array,setTimeout,]);

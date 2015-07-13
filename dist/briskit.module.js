@@ -1,6 +1,6 @@
-/*! briskit - 0.2.0 - Bernard McManus - 5913d2b - 2015-04-26 */
+/*! briskit - 0.2.1 - Bernard McManus - 2b5c46e - 2015-07-12 */
 
-(function(Array,setTimeout,$UNDEFINED) {
+export default (function(Array,setTimeout,$UNDEFINED) {
     "use strict";
     var static$$$global = (typeof global != '' + $UNDEFINED ? global : window);
     function async$$chooseProvider() {
@@ -131,11 +131,5 @@
     stack$$default.use = providers$$setProvider;
     providers$$setProvider();
     var $$index$$default = stack$$default;
-
-    if (typeof exports == 'object') {
-      module.exports = $$index$$default;
-    }
-    else {
-      this.briskit = $$index$$default;
-    }
-}).apply(this,[Array,setTimeout]);
+    return $$index$$default;
+}).apply(this,[Array,setTimeout,]);
