@@ -1,9 +1,6 @@
 module.exports = function( grunt ) {
 
-  var path = require( 'path' );
-  var fs = require( 'fs-extra' );
   var cp = require( 'child_process' );
-  var util = require( 'util' );
   var Promise = require( 'es6-promise' ).Promise;
 
   grunt.initConfig({
@@ -24,10 +21,8 @@ module.exports = function( grunt ) {
     },
 
     clean: {
-      'dist': [ 'dist' ],
-      'tmp': [ 'tmp' ],
-      'common-dev': [ 'dist/<%= pkg.name %>.js' ],
-      'common-prod': [ 'dist/<%= pkg.name %>.min.js' ]
+      dist: [ 'dist' ],
+      tmp: [ 'tmp' ]
     },
 
     'release-describe': {
@@ -58,57 +53,57 @@ module.exports = function( grunt ) {
       }
     },
 
-    transpile: {
-      common: {
-        src: '<%= pkg.config.src %>',
-        dest: 'tmp/<%= pkg.name %>.common.js',
-        index: '<%= pkg.config.umd %>'
-      },
-      module: {
-        src: '<%= pkg.config.src %>',
-        dest: 'tmp/<%= pkg.name %>.module.js',
-        index: '<%= pkg.config.module %>'        
-      },
+    browserify: {
+      dist: {
+        options: {
+          transform: [[ 'babelify' , { stage: 0 }]],
+          browserifyOptions: {
+            'standalone': 'standalone',
+            'debug': 'debug'
+          }
+        },
+        files: {
+          '<%= pkg.config.tmp %>': '<%= pkg.config.index %>'
+        }
+      }
+    },
+
+    wrap: {
       options: {
+        global: '$global',
         inject: [
           'Array',
           'setTimeout',
           [ '$UNDEFINED' ]
         ]
-      }
-    },
-
-    toES6Module: {
-      common: {
-        'dist/<%= pkg.name %>.module.js': 'dist/<%= pkg.name %>.module.js'
+      },
+      dist: {
+        files: {
+          '<%= pkg.config.tmp %>': '<%= pkg.config.tmp %>'
+        }
       }
     },
 
     concat: {
       options: {
-        banner: "/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.data.gitinfo.local.branch.current.shortSHA %> - <%= grunt.template.today('yyyy-mm-dd') %> */\n\n"
+        banner: '<%= pkg.config.banner %>\n'
       },
-      common: {
-        src: 'tmp/<%= pkg.name %>.common.js',
+      dist: {
+        src: '<%= pkg.config.tmp %>',
         dest: 'dist/<%= pkg.name %>.js'
-      },
-      module: {
-        src: 'tmp/<%= pkg.name %>.module.js',
-        dest: 'dist/<%= pkg.name %>.module.js'
       }
     },
 
     uglify: {
       options: {
-        banner: "/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.data.gitinfo.local.branch.current.shortSHA %> - <%= grunt.template.today('yyyy-mm-dd') %> */\n"
+        banner: '<%= pkg.config.banner %>'
       },
-      common: {
+      dist: {
         files: {
-          'dist/<%= pkg.name %>.min.js': 'tmp/**/*.js'
+          'dist/<%= pkg.name %>.min.js': '<%= pkg.config.tmp %>'
         }
       }
     }
-
   });
 
   grunt.loadTasks( 'tasks' );
@@ -121,7 +116,8 @@ module.exports = function( grunt ) {
     'grunt-contrib-concat',
     'grunt-contrib-uglify',
     'grunt-contrib-watch',
-    'grunt-import-clean'
+    'grunt-import-clean',
+    'grunt-browserify'
   ]
   .forEach( grunt.loadNpmTasks );
 
@@ -155,17 +151,17 @@ module.exports = function( grunt ) {
   grunt.registerTask( 'build' , [
     'gitinfo',
     'clean:dist',
-    'transpile',
+    'browserify',
+    'wrap',
     'concat',
     'uglify',
-    'toES6Module',
     'clean:tmp'
   ]);
 
   grunt.registerTask( 'test' , [
     'jshint',
     'import-clean',
-    'build:common-dev',
+    'build',
     'runTests'
   ]);
 

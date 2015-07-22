@@ -1,4 +1,4 @@
-import { timeout, getProvider } from 'providers';
+import { timeout, getProvider } from './providers';
 
 export var stack = Array( 1024 );
 export var length = 0;
@@ -34,7 +34,7 @@ export function scheduleError( err ) {
   errors.push( err );
   timeout(function() {
     var err = errors.shift();
-    if (err !== $UNDEFINED) {
+    if (err != $UNDEFINED) {
       console.error( err.stack || err );
       throw err;
     }

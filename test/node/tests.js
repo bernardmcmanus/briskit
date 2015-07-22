@@ -1,6 +1,5 @@
 module.exports = (function() {
 
-
   'use strict';
 
   var colors = require( 'colors' );

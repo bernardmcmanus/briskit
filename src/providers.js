@@ -1,5 +1,5 @@
-import { flush } from 'stack';
-import { chooseProvider } from 'async';
+import { flush } from './stack';
+import { chooseProvider } from './async';
 
 var async$provider;
 

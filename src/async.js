@@ -1,11 +1,10 @@
-import { $global } from 'static';
 import {
   setProvider,
   nextTick,
   observer,
   worker,
   timeout
-} from 'providers';
+} from './providers';
 
 export function chooseProvider() {
   if (setImmediate) {
