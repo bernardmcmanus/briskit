@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "grunt-jsdoc": {
+      "version": "0.6.6",
+      "from": "grunt-jsdoc@0.6.6",
+      "dependencies": {
+        "jsdoc": {
+          "version": "3.4.0-dev",
+          "from": "jsdoc@^3.3.0",
+          "resolved": "git://github.com/jsdoc3/jsdoc.git#9856173fc720f863c27eec9cc6629225620e07c9"
+        }
+      }
+    }
+  }
+}
