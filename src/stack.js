@@ -1,42 +1,49 @@
-import { timeout, getProvider } from './providers';
+export default function Stack( $async ) {
+  var queue = Array( 1024 );
+  var length = 0;
+  var deferred = false;
+  var inprog = false;
 
-export var stack = Array( 1024 );
-export var length = 0;
-export var errors = [];
+  var $stack = function( cb ) {
+    queue[length] = cb;
+    length++;
+    if (!deferred) {
+      $async( flush );
+    }
+  };
 
-export default function scheduleTask( cb , arg ) {
-  stack[length] = cb;
-  stack[length+1] = arg;
-  length += 2;
-  if (length == 2) {
-    getProvider()();
+  $stack.defer = function() {
+    deferred = true;
+  };
+
+  $stack.release = function() {
+    deferred = false;
+    $async( flush );
+  };
+
+  function flush() {
+    var cb, i = 0;
+    if (!inprog) {
+      inprog = true;
+      for (; i < length; i++) {
+        cb = queue[i];
+        queue[i] = UNDEFINED;
+        try {
+          cb();
+        }
+        catch( err ) {
+          /* jshint ignore:start */
+          setTimeout(function() {
+            console.error( err.stack || err );
+            throw err;
+          });
+          /* jshint ignore:end */
+        }
+      }
+      inprog = false;
+      length = 0;
+    }
   }
-}
 
-export function flush() {
-  var cb, arg;
-  for (var i = 0; i < length; i += 2) {
-    cb = stack[i];
-    arg = stack[i+1];
-    stack[i] = $UNDEFINED;
-    stack[i+1] = $UNDEFINED;
-    try {
-      cb( arg );
-    }
-    catch( err ) {
-      scheduleError( err );
-    }
-  }
-  length = 0;
-}
-
-export function scheduleError( err ) {
-  errors.push( err );
-  timeout(function() {
-    var err = errors.shift();
-    if (err != $UNDEFINED) {
-      console.error( err.stack || err );
-      throw err;
-    }
-  })();
+  return $stack;
 }
