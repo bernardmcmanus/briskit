@@ -4,6 +4,7 @@ module.exports = (function() {
 
   return function( briskit ) {
 
+    var Promise = require( 'es6-promise' ).Promise;
     var domain = require( 'domain' );
     var mocha = require( 'mocha' );
     var chai = require( 'chai' );
@@ -28,14 +29,8 @@ module.exports = (function() {
     });
 
     describe( '::use' , function() {
-      it( 'should change the async provider if one is passed' , function ( done ) {
-        var provider;
-        if (typeof window != 'undefined') {
-          provider = briskit.providers.nextTick;
-        }
-        else {
-          provider = briskit.providers.observer;
-        }
+      it( 'should change the async provider if one is passed' , function( done ) {
+        var provider = (typeof window != 'undefined' ? 'nextTick' : 'observer');
         briskit.use( provider );
         expect(function() {
           briskit(function(){});
@@ -44,7 +39,7 @@ module.exports = (function() {
           done();
         });
       });
-      it( 'should use the best available async provider if nothing is passed' , function ( done ) {
+      it( 'should use the best available async provider if nothing is passed' , function( done ) {
         briskit.use();
         expect(function() {
           briskit(function(){});
@@ -55,9 +50,68 @@ module.exports = (function() {
       });
     });
 
+    describe( '::fork' , function() {
+      it( 'should fork a briskit instance' , function( done ) {
+        var f1 = briskit.fork();
+        var f2 = f1.fork();
+        f1.use( 'timeout' );
+        f2.use( typeof window != 'undefined' ? 'worker' : 'nextTick' );
+        Promise.all([
+          new Promise(function( resolve ) {
+            f1( resolve );
+          })
+          .then(function() {
+            return Date.now();
+          }),
+          new Promise(function( resolve ) {
+            f2( resolve );
+          })
+          .then(function() {
+            return Date.now();
+          })
+        ])
+        .then(function( timestamps ) {
+          expect( timestamps[0] ).to.be.gte( timestamps[1] );
+          done();
+        })
+        .catch( done );
+      });
+    });
+
+    (function() {
+      var calls = 0;
+      var expected = 10;
+      var fork = briskit.fork();
+
+      describe( '::defer' , function() {
+        it( 'should prevent a briskit instance from flushing' , function( done ) {
+          fork.defer();
+          for (var i = 0; i < expected; i++) {
+            fork(function() {
+              calls++;
+            });
+          }
+          setTimeout(function() {
+            expect( calls ).to.equal( 0 );
+            done();
+          },NORMAL_WAIT);
+        });
+      });
+
+      describe( '::release' , function() {
+        it( 'should allow a deferred briskit instance to flush' , function( done ) {
+          fork.release();
+          setTimeout(function() {
+            expect( calls ).to.equal( expected );
+            done();
+          },NORMAL_WAIT);
+        });
+      });
+    }());
+
     describe( 'general' , function() {
 
-      it( 'should call a task in the future' , function ( done ) {
+      it( 'should call a task in the future' , function( done ) {
         var called = false;
         briskit(function () {
           called = true;
@@ -66,7 +120,7 @@ module.exports = (function() {
         expect( called ).to.not.be.ok;
       });
 
-      it( 'should maintain task order' , function ( done ) {
+      it( 'should maintain task order' , function( done ) {
 
         var calls = [];
 
@@ -90,7 +144,7 @@ module.exports = (function() {
         }, NORMAL_WAIT);
       });
 
-      it( 'should maintain breadth-first order' , function ( done ) {
+      it( 'should maintain breadth-first order' , function( done ) {
 
         var calls = [];
 
@@ -137,7 +191,7 @@ module.exports = (function() {
 
     describe( 'recursion' , function() {
 
-      it( 'should allow for recursive scheduling' , function ( done ) {
+      it( 'should allow for recursive scheduling' , function( done ) {
 
         var steps = [];
 
@@ -159,7 +213,7 @@ module.exports = (function() {
         }, NORMAL_WAIT);
       });
 
-      it( 'can recurse ' + MAX_RECURSION + ' tasks deep' , function ( done ) {
+      it( 'can recurse ' + MAX_RECURSION + ' tasks deep' , function( done ) {
 
         var timesRecursed = 0;
 
@@ -175,7 +229,7 @@ module.exports = (function() {
         }, NORMAL_WAIT);
       });
 
-      it( 'can execute two branches of recursion in parallel' , function ( done ) {
+      it( 'can execute two branches of recursion in parallel' , function( done ) {
 
         var timesRecursed1 = 0;
         var timesRecursed2 = 0;
@@ -208,7 +262,7 @@ module.exports = (function() {
 
     describe( 'errors' , function() {
 
-      it( 'should preserve the order of thrown errors' , function ( done ) {
+      it( 'should preserve the order of thrown errors' , function( done ) {
 
         var calls = [];
         var errors = [];
@@ -244,7 +298,7 @@ module.exports = (function() {
         }, ERROR_WAIT);
       });
 
-      it( 'should preserve the respective order of errors interleaved among successes' , function ( done ) {
+      it( 'should preserve the respective order of errors interleaved among successes' , function( done ) {
 
         var calls = [];
         var errors = [];
@@ -289,7 +343,7 @@ module.exports = (function() {
         }, ERROR_WAIT);
       });
 
-      it( 'should execute tasks scheduled by another task that later throws an error' , function ( done ) {
+      it( 'should execute tasks scheduled by another task that later throws an error' , function( done ) {
         
         var errors = [];
         var d = domain.create();
@@ -315,7 +369,7 @@ module.exports = (function() {
         }, ERROR_WAIT);
       });
 
-      it( 'should execute a tree of tasks in breadth-first order when some tasks throw errors' , function ( done ) {
+      it( 'should execute a tree of tasks in breadth-first order when some tasks throw errors' , function( done ) {
         
         var calls = [];
         var errors = [];
@@ -378,7 +432,7 @@ module.exports = (function() {
 
     describe( 'errors and recursion' , function() {
 
-      it( 'should rethrow task errors while maintaining order of recursive tasks' , function ( done ) {
+      it( 'should rethrow task errors while maintaining order of recursive tasks' , function( done ) {
 
         var timesRecursed = 0;
         var errors = [];
@@ -410,7 +464,7 @@ module.exports = (function() {
         }, ERROR_WAIT);
       });
 
-      it( 'should handle errors and maintain order while executing multiple parallel deep recursions' , function ( done ) {
+      it( 'should handle errors and maintain order while executing multiple parallel deep recursions' , function( done ) {
 
         var timesRecursed1 = 0;
         var timesRecursed2 = 0;

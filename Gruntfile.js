@@ -47,8 +47,7 @@ module.exports = function( grunt ) {
 
     watch: {
       debug: {
-        files: [ 'Gruntfile.js' , '<%= pkg.config.src %>' , 'build/*.js' , 'test/*.js' ],
-        options: { interrupt: true },
+        files: [ 'Gruntfile.js' , '<%= pkg.config.src %>' , 'test/**/*.js' , '!tmp' ],
         tasks: [ 'test' ]
       }
     },
@@ -59,7 +58,8 @@ module.exports = function( grunt ) {
           transform: [[ 'babelify' , { stage: 0 }]],
           browserifyOptions: {
             'standalone': 'standalone',
-            'debug': 'debug'
+            'debug': 'debug',
+            'paths': [ 'src' ]
           }
         },
         files: {
@@ -74,7 +74,7 @@ module.exports = function( grunt ) {
         inject: [
           'Array',
           'setTimeout',
-          [ '$UNDEFINED' ]
+          [ 'UNDEFINED' ]
         ]
       },
       dist: {

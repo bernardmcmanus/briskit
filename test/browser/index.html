@@ -16,7 +16,6 @@
 
     // define some necessary test stuff
     window.module = {};
-    // window.Uint8ClampedArray = window.Uint8ClampedArray || function(){};
 
     Object.defineProperty( window , 'exports' , {
       get: function() {
@@ -26,6 +25,7 @@
 
     require.config({
       paths: {
+        'es6-promise': 'file://[PROJECT_ROOT]/node_modules/es6-promise/dist/es6-promise',
         'mocha': 'file://[PROJECT_ROOT]/node_modules/mocha/mocha',
         'chai': 'file://[PROJECT_ROOT]/node_modules/chai/chai',
         'domain': 'file://[PROJECT_ROOT]/test/browser/domain',
@@ -38,7 +38,7 @@
         'mocha': { exports: 'mocha' },
         'chai': { exports: 'chai' },
         'briskit': { exports: 'briskit' },
-        'tests': [ 'mocha' , 'chai' , 'domain' , 'zone' , 'briskit' ]
+        'tests': [ 'es6-promise' , 'mocha' , 'chai' , 'domain' , 'zone' , 'briskit' ]
       }
     });
 
