@@ -1,7 +1,7 @@
-/*! briskit - 1.0.0 - Bernard McManus - b26b5fc - 2015-07-23 */
+/*! briskit - 1.0.1 - Bernard McManus - 992dd2e - 2015-07-31 */
 
 (function($global,Array,setTimeout,UNDEFINED) {
-  (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.standalone = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+  (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.standalone = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
   'use strict';
   
   Object.defineProperty(exports, '__esModule', {
@@ -88,7 +88,7 @@
     return Uint8ClampedArray && channel ? channel : false;
   })();
   
-  },{}],2:[function(require,module,exports){
+  },{}],2:[function(_dereq_,module,exports){
   'use strict';
   
   Object.defineProperty(exports, '__esModule', {
@@ -97,11 +97,11 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _stack = require('stack');
+  var _stack = _dereq_('stack');
   
   var _stack2 = _interopRequireDefault(_stack);
   
-  var _async = require('async');
+  var _async = _dereq_('async');
   
   var _async2 = _interopRequireDefault(_async);
   
@@ -126,7 +126,7 @@
   }
   module.exports = exports['default'];
   
-  },{"async":1,"stack":3}],3:[function(require,module,exports){
+  },{"async":1,"stack":3}],3:[function(_dereq_,module,exports){
   "use strict";
   
   Object.defineProperty(exports, "__esModule", {

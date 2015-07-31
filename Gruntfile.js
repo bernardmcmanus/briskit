@@ -56,6 +56,9 @@ module.exports = function( grunt ) {
       dist: {
         options: {
           transform: [[ 'babelify' , { stage: 0 }]],
+          plugin: [
+            [ 'browserify-derequire' ]
+          ],
           browserifyOptions: {
             'standalone': 'standalone',
             'debug': 'debug',
