@@ -1,18 +1,17 @@
 export default function AsyncProvider() {
-  var that = this;
   var $provider;
-  var $async = function( cb ) {
+  function $async( cb ) {
     $provider( cb )();
-  };
-  $async.use = function( name ) {
-    $provider = providers[name] || chooseProvider();
+  }
+  $async.use = function( arg ) {
+    $provider = providers[arg] || arg || chooseProvider();
   };
   return $async;
 }
 
 export var providers = { nextTick , observer , worker , timeout };
 
-export function chooseProvider() {
+export function chooseProvider( customProvider ) {
   if ($setImmediate) {
     return nextTick;
   }

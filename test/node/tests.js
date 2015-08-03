@@ -5,15 +5,11 @@ module.exports = (function() {
   var colors = require( 'colors' );
   var chai = require( 'chai' );
   var expect = chai.expect;
-
   
   var TAB = new Array( 9 ).join( ' ' );
 
-
   return function( briskit ) {
-
     describe( 'platform-specific' , function() {
-
       it( 'should use setImmediate when running in node' , function ( done ) {
         var called = false, ticked = false;
         setTimeout(function() {
@@ -32,9 +28,6 @@ module.exports = (function() {
           called = true;
         });
       });
-
     });
-
   };
-
 }());

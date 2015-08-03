@@ -28,8 +28,101 @@ module.exports = (function() {
       console.error = function(){};
     });
 
+    after(function() {
+      delete console.error;
+    });
+
+    describe( '::stack' , function() {
+      it( 'should not flush concurrently when flushProvider is synchronous' , function( done ) {
+        var expected = [], actual = [];
+        var i = 0, max = 9, flushProviderCalled = 0;
+        var stack = briskit.stack( undefined , function( cb ) {
+          flushProviderCalled++;
+          cb();
+        });
+        for (; i <= max; i++) {
+          expected.push( i );
+          (function( i ) {
+            stack.enqueue(function() {
+              actual.push( i );
+              if (i < max) {
+                stack.flush();
+              }
+              else {
+                expect( actual ).to.eql( expected );
+                expect( flushProviderCalled ).to.eql( 1 );
+                done();
+              }
+            });
+          }( i ));
+        }
+        stack.flush();
+      });
+      it( 'should not flush concurrently when flushProvider is asynchronous' , function( done ) {
+        var expected = [], actual = [];
+        var i = 0, max = 9, flushProviderCalled = 0;
+        var stack = briskit.stack( undefined , function( cb ) {
+          flushProviderCalled++;
+          setTimeout( cb );
+        });
+        for (; i <= max; i++) {
+          expected.push( i );
+          (function( i ) {
+            stack.enqueue(function() {
+              actual.push( i );
+              if (i < max) {
+                stack.flush();
+              }
+              else {
+                expect( actual ).to.eql( expected );
+                expect( flushProviderCalled ).to.eql( 1 );
+                done();
+              }
+            });
+          }( i ));
+        }
+        stack.flush();
+      });
+      it( 'should support defer' , function( done ) {
+        var stack = briskit.stack();
+        var expected = [], actual = [];
+        var i = 0, max = 999;
+        stack.defer();
+        for (; i <= max; i++) {
+          expected.push( expected.length );
+          stack.enqueue(function() {
+            actual.push( actual.length );
+          });
+        }
+        expect( actual ).to.have.length( 0 );
+        stack.flush();
+        expect( actual ).to.have.length( expected.length );
+        done();
+      });
+    });
+
     describe( '::use' , function() {
-      it( 'should change the async provider if one is passed' , function( done ) {
+      it( 'should accept a custom provider' , function( done ) {
+        var customProviderCalled = 0;
+        briskit.use(function( cb ) {
+          return function() {
+            customProviderCalled++;
+            cb();
+          };
+        });
+        briskit(function(){
+          expect( customProviderCalled ).to.equal( 1 );
+        });
+        briskit(function(){
+          expect( customProviderCalled ).to.equal( 2 );
+        });
+        briskit(function(){
+          expect( customProviderCalled ).to.equal( 3 );
+        });
+        briskit.use();
+        done();
+      });
+      it( 'should change the async provider if a string is passed' , function( done ) {
         var provider = (typeof window != 'undefined' ? 'nextTick' : 'observer');
         briskit.use( provider );
         expect(function() {
@@ -98,9 +191,9 @@ module.exports = (function() {
         });
       });
 
-      describe( '::release' , function() {
-        it( 'should allow a deferred briskit instance to flush' , function( done ) {
-          fork.release();
+      describe( '::flush' , function() {
+        it( 'should flush a deferred briskit instance' , function( done ) {
+          fork.flush();
           setTimeout(function() {
             expect( calls ).to.equal( expected );
             done();
@@ -524,20 +617,3 @@ module.exports = (function() {
   };
 
 }());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
