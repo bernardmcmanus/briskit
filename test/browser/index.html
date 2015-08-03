@@ -1,13 +1,11 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <!-- ============================================= -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>briskit | automated browser tests</title>
-    <!-- ============================================= -->
-    <link rel="stylesheet" href="file://[PROJECT_ROOT]/node_modules/mocha/mocha.css">
-    <script src="file://[PROJECT_ROOT]/node_modules/requirejs/require.js"></script>
-    <!-- ============================================= -->
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/bower_components/requirejs/require.js"></script>
   </head>
   <body>
     <div id="mocha"></div>
@@ -23,37 +21,37 @@
       }
     });
 
+    mocha.setup( 'bdd' );
+    mocha.reporter( 'html' );
+
     require.config({
       paths: {
-        'es6-promise': 'file://[PROJECT_ROOT]/node_modules/es6-promise/dist/es6-promise',
-        'mocha': 'file://[PROJECT_ROOT]/node_modules/mocha/mocha',
-        'chai': 'file://[PROJECT_ROOT]/node_modules/chai/chai',
-        'domain': 'file://[PROJECT_ROOT]/test/browser/domain',
-        'zone': 'file://[PROJECT_ROOT]/bower_components/zone/zone',
-        'briskit': 'file://[PROJECT_DIST]',
-        'tests': 'file://[PROJECT_ROOT]/test/common/tests'
+        'es6-promise': '/node_modules/es6-promise/dist/es6-promise',
+        'chai': '/node_modules/chai/chai',
+        'domain': '/test/browser/domain',
+        'zone': '/bower_components/zone/zone',
+        'briskit': '/dist/briskit',
+        'tests': '/test/common/tests'
       },
       shim: {
         'zone': { exports: 'zone' },
-        'mocha': { exports: 'mocha' },
         'chai': { exports: 'chai' },
         'briskit': { exports: 'briskit' },
-        'tests': [ 'es6-promise' , 'mocha' , 'chai' , 'domain' , 'zone' , 'briskit' ]
+        'tests': [ 'es6-promise' , 'chai' , 'domain' , 'zone' , 'briskit' ]
       }
     });
 
-    define( 'init' , [ 'mocha' ], function( mocha , chai ) {
-      mocha.setup( 'bdd' );
-      mocha.reporter( 'html' );
+    define( 'mocha' , function() {
+      return window.mocha;
     });
 
-    require([ 'init' , 'tests' ], function() {
+    require([ 'mocha' , 'tests' ], function() {
       var briskit = require( 'briskit' );
       describe( 'browser' , function() {
         window.exports( briskit );
       });
-      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
-      else { mocha.run(); }
+      window[( window.mochaPhantomJS ? 'mochaPhantomJS' : 'mocha' )].run();
     });
+
   </script>
 </html>
