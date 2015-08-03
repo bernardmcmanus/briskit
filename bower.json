@@ -4,6 +4,7 @@
   "description": "High-priority asynchronous task queue",
   "main": "dist/briskit.min.js",
   "devDependencies": {
+    "requirejs": "~2.1.15",
     "zone": "~0.3.0"
   },
   "keywords": [

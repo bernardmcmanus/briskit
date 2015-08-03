@@ -14,6 +14,7 @@ module.exports = (function() {
     var MAX_RECURSION = 10;
     var NORMAL_WAIT = 10;
     var ERROR_WAIT = 10;
+    var TAB = new Array( 9 ).join( ' ' );
 
 
     if (typeof window != 'undefined') {
@@ -164,7 +165,17 @@ module.exports = (function() {
           })
         ])
         .then(function( timestamps ) {
-          expect( timestamps[0] ).to.be.gte( timestamps[1] );
+          try {
+            expect( timestamps[0] ).to.be.gte( timestamps[1] );
+          }
+          catch( err ) {
+            if (typeof window == 'undefined') {
+              console.log( TAB + '\x1b[33mWARNING: failed to execute tick before timeout\x1b[0m' );
+            }
+            else {
+              return Promise.reject( err );
+            }
+          }
           done();
         })
         .catch( done );
