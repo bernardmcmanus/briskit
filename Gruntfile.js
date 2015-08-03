@@ -1,8 +1,5 @@
 module.exports = function( grunt ) {
 
-  var cp = require( 'child_process' );
-  var Promise = require( 'es6-promise' ).Promise;
-
   grunt.initConfig({
 
     pkg: grunt.file.readJSON( 'package.json' ),
@@ -35,8 +32,8 @@ module.exports = function( grunt ) {
     replace: [{
       options: {
         patterns: [{
-          match: /(\"version\")(.*?)(\")(.{1,}?)(\")/i,
-          replacement: '\"version\": \"<%= pkg.version %>\"'
+          match: /(.*"version"\:\s*).*(?=,)/i,
+          replacement: '$1"<%= pkg.version %>"'
         }]
       },
       files: [{
@@ -47,8 +44,11 @@ module.exports = function( grunt ) {
 
     watch: {
       debug: {
-        files: [ 'Gruntfile.js' , '<%= pkg.config.src %>' , 'test/**/*.js' , '!tmp' ],
-        tasks: [ 'test' ]
+        files: [ '<%= pkg.config.src %>' , 'test/**/*' , '!tmp' , '!*/tmp' ],
+        tasks: [ '_test' ],
+        options: {
+          interrupt: true
+        }
       }
     },
 
@@ -73,11 +73,9 @@ module.exports = function( grunt ) {
 
     wrap: {
       options: {
-        global: '$global',
-        inject: [
-          'Array',
-          'setTimeout',
-          [ 'UNDEFINED' ]
+        wrapper: [
+          '(function($global,Array,setTimeout,UNDEFINED) {\n',
+          '\n}((typeof global != "undefined" ? global : typeof self != "undefined" ? self : typeof window != "undefined" ? window : {}),Array,setTimeout))'
         ]
       },
       dist: {
@@ -106,6 +104,31 @@ module.exports = function( grunt ) {
           'dist/<%= pkg.name %>.min.js': '<%= pkg.config.tmp %>'
         }
       }
+    },
+
+    mochaTest: {
+      node: {
+        src: 'test/node'
+      }
+    },
+
+    connect: {
+      server: {
+        options: {
+          port: '<%= pkg.config.connect.port %>',
+          base: '<%= pkg.config.connect.base %>',
+          hostname: '<%= pkg.config.connect.hostname %>',
+          interrupt: true
+        }
+      }
+    },
+
+    mocha_phantomjs: {
+      browser: {
+        options: { urls: [
+          '<%= pkg.config.connect.url %>/test/browser/index.html'
+        ]}
+      }
     }
   });
 
@@ -120,28 +143,13 @@ module.exports = function( grunt ) {
     'grunt-contrib-uglify',
     'grunt-contrib-watch',
     'grunt-import-clean',
-    'grunt-browserify'
+    'grunt-browserify',
+    'grunt-wrap',
+    'grunt-mocha-test',
+    'grunt-contrib-connect',
+    'grunt-mocha-phantomjs'
   ]
   .forEach( grunt.loadNpmTasks );
-
-  grunt.registerTask( 'runTests' , function() {
-    var done = this.async();
-    new Promise(function( resolve ) {
-      var task = cp.spawn( 'npm' , [ 'test' ]);
-      resolve( task.stdout );
-    })
-    .then(function( readable ) {
-      readable.pipe( process.stdout );
-      return new Promise(function( resolve , reject ) {
-        readable.on( 'end' , resolve );
-        readable.on( 'error' , reject );
-      })
-      .catch(function( err ) {
-        return err;
-      });
-    })
-    .then( done );
-  });
 
   grunt.registerTask( 'default' , [
     'clean',
@@ -162,10 +170,17 @@ module.exports = function( grunt ) {
   ]);
 
   grunt.registerTask( 'test' , [
+    'bower-install',
+    'connect',
+    '_test'
+  ]);
+
+  grunt.registerTask( '_test' , [
     'jshint',
     'import-clean',
     'build',
-    'runTests'
+    'mochaTest',
+    'mocha_phantomjs'
   ]);
 
   grunt.registerTask( 'debug' , [
