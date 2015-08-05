@@ -7,7 +7,7 @@ module.exports = function( grunt ) {
     gitinfo: {},
 
     jshint: {
-      all: [ 'Gruntfile.js' , '<%= pkg.config.src %>' ],
+      all: '<%= pkg.config.src %>',
       options: {
         esnext: true
       }
@@ -60,7 +60,7 @@ module.exports = function( grunt ) {
             [ 'browserify-derequire' ]
           ],
           browserifyOptions: {
-            'standalone': 'standalone',
+            'standalone': 'briskit',
             'debug': 'debug',
             'paths': [ 'src' ]
           }
