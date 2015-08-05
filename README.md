@@ -69,8 +69,8 @@ the briskit stack can be used as a standalone class. all parameters are optional
 // commonjs
 var stack = briskit.stack( true );
 
-// modules
-var Stack = reqire( 'briskit/stack' );
+// ES6 (requires compilation)
+var Stack = reqire( 'briskit/src/stack' );
 stack = new Stack( true );
 
 // usage

@@ -23,7 +23,7 @@ module.exports = function( grunt ) {
     },
 
     'release-describe': {
-      build: {
+      dist: {
         src: 'dist/<%= pkg.name %>.js',
         dest: 'dist/<%= pkg.name %>.min.js'
       }
@@ -66,7 +66,7 @@ module.exports = function( grunt ) {
           }
         },
         files: {
-          '<%= pkg.config.tmp %>': '<%= pkg.config.index %>'
+          'tmp/<%= pkg.name %>.js': 'src/index.js'
         }
       }
     },
@@ -80,7 +80,7 @@ module.exports = function( grunt ) {
       },
       dist: {
         files: {
-          '<%= pkg.config.tmp %>': '<%= pkg.config.tmp %>'
+          'tmp/<%= pkg.name %>.js': 'tmp/<%= pkg.name %>.js'
         }
       }
     },
@@ -90,7 +90,7 @@ module.exports = function( grunt ) {
         banner: '<%= pkg.config.banner %>\n'
       },
       dist: {
-        src: '<%= pkg.config.tmp %>',
+        src: 'tmp/<%= pkg.name %>.js',
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -101,7 +101,7 @@ module.exports = function( grunt ) {
       },
       dist: {
         files: {
-          'dist/<%= pkg.name %>.min.js': '<%= pkg.config.tmp %>'
+          'dist/<%= pkg.name %>.min.js': 'tmp/<%= pkg.name %>.js'
         }
       }
     },

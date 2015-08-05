@@ -1,4 +1,4 @@
-/*! briskit - 1.1.0 - Bernard McManus - 63149ee - 2015-08-05 */
+/*! briskit - 1.1.0 - Bernard McManus - fce211e - 2015-08-05 */
 
 (function($global,Array,setTimeout,UNDEFINED) {
 

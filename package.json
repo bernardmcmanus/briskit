@@ -5,8 +5,6 @@
   "main": "dist/briskit.js",
   "config": {
     "src": "src/*.js",
-    "tmp": "tmp/<%= pkg.name %>.js",
-    "index": "src/index.js",
     "banner": "/*! <%= pkg.name %> - <%= pkg.version %> - <%= pkg.author.name %> - <%= grunt.config.data.gitinfo.local.branch.current.shortSHA %> - <%= grunt.template.today('yyyy-mm-dd') %> */\n",
     "connect": {
       "port": 9001,
