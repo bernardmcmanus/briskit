@@ -63,15 +63,15 @@ the briskit stack can be used as a standalone class. all parameters are optional
 | --------- | ---- | ------- | ----------- |
 | `autoflush` | `boolean` | `false` | When true, the stack will attempt to flush as soon as a callback is enqueued. |
 | `provider` | `function` | `asdf` | The function used for flush calls. Synchronous by default. |
-| `provider` | `number` | `1024` | The preallocated stack size. |
+| `prealloc` | `number` | `1024` | The preallocated stack size. |
 
 ```javascript
 // commonjs
 var stack = briskit.stack( true );
 
 // ES6 (requires compilation)
-var Stack = reqire( 'briskit/src/stack' );
-stack = new Stack( true );
+import Stack from 'briskit/src/stack';
+var stack = new Stack( true );
 
 // usage
 stack.defer();
