@@ -1,6 +1,6 @@
 {
   "name": "briskit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "High-priority asynchronous task queue",
   "main": "dist/briskit.min.js",
   "devDependencies": {
@@ -14,7 +14,7 @@
     "async",
     "asynchronous"
   ],
-  "homepage": "https://github.com/elnarddogg/briskit.git",
+  "homepage": "https://github.com/elnarddogg/briskit",
   "authors": [
     "Bernard McManus"
   ],

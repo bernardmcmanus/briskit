@@ -8,9 +8,7 @@ module.exports = function( grunt ) {
 
     jshint: {
       all: '<%= pkg.config.src %>',
-      options: {
-        esnext: true
-      }
+      options: { esnext: true }
     },
 
     'import-clean': {
@@ -22,25 +20,23 @@ module.exports = function( grunt ) {
       tmp: [ 'tmp' ]
     },
 
-    'release-describe': {
-      dist: {
-        src: 'dist/<%= pkg.name %>.js',
-        dest: 'dist/<%= pkg.name %>.min.js'
+    update_json: {
+      options: {
+        src: 'package.json',
+        indent: '  '
+      },
+      bower: {
+        dest: 'bower.json',
+        fields: [
+          'name',
+          'version',
+          'description',
+          'keywords',
+          'homepage',
+          'license'
+        ]
       }
     },
-
-    replace: [{
-      options: {
-        patterns: [{
-          match: /(.*"version"\:\s*).*(?=,)/i,
-          replacement: '$1"<%= pkg.version %>"'
-        }]
-      },
-      files: [{
-        src: 'bower.json',
-        dest: 'bower.json'
-      }]
-    }],
 
     watch: {
       debug: {
@@ -74,8 +70,8 @@ module.exports = function( grunt ) {
     wrap: {
       options: {
         wrapper: [
-          '(function($global,Array,setTimeout,UNDEFINED) {\n',
-          '\n}((typeof global != "undefined" ? global : typeof self != "undefined" ? self : typeof window != "undefined" ? window : {}),Array,setTimeout))'
+          '(function(Array,setTimeout,UNDEFINED) {\n',
+          '\n}(Array,setTimeout))'
         ]
       },
       dist: {
@@ -129,6 +125,14 @@ module.exports = function( grunt ) {
           '<%= pkg.config.connect.url %>/test/browser/index.html'
         ]}
       }
+    },
+
+    'release-describe': {
+      build: {
+        files: {
+          'dist/<%= pkg.name %>.min.js': 'dist/<%= pkg.name %>.js'
+        }
+      }
     }
   });
 
@@ -138,7 +142,6 @@ module.exports = function( grunt ) {
     'grunt-contrib-jshint',
     'grunt-contrib-clean',
     'grunt-gitinfo',
-    'grunt-replace',
     'grunt-contrib-concat',
     'grunt-contrib-uglify',
     'grunt-contrib-watch',
@@ -147,14 +150,15 @@ module.exports = function( grunt ) {
     'grunt-wrap',
     'grunt-mocha-test',
     'grunt-contrib-connect',
-    'grunt-mocha-phantomjs'
+    'grunt-mocha-phantomjs',
+    'grunt-update-json'
   ]
   .forEach( grunt.loadNpmTasks );
 
   grunt.registerTask( 'default' , [
     'clean',
     'build',
-    'replace',
+    'update_json',
     'test',
     'release-describe'
   ]);

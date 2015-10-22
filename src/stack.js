@@ -4,7 +4,7 @@
  * @param {function} [provider] - The function used for flush calls. Synchronous by default.
  * @param {number} [prealloc=1024] - The preallocated stack size.
  */
-export default function Stack( autoflush , provider , prealloc ) {
+export default function Stack( autoflush , provider , prealloc ){
   autoflush = !!autoflush;
   provider = provider || function( cb ){ cb(); };
 
@@ -14,26 +14,26 @@ export default function Stack( autoflush , provider , prealloc ) {
   var inprog = false;
 
   var $stack = {
-    enqueue: function( cb ) {
+    enqueue: function( cb ){
       queue[length] = cb;
       length++;
       if (!deferred) {
         _flush();
       }
     },
-    defer: function() {
+    defer: function(){
       deferred = true;
     },
-    flush: function() {
+    flush: function(){
       deferred = !autoflush;
       _flush();
     }
   };
 
-  function _flush() {
+  function _flush(){
     if (!inprog) {
       inprog = true;
-      provider(function() {
+      provider(function(){
         var cb, i = 0;
         for (; i < length; i++) {
           cb = queue[i];
@@ -41,9 +41,9 @@ export default function Stack( autoflush , provider , prealloc ) {
           try {
             cb();
           }
-          catch( err ) {
+          catch( err ){
             /* jshint ignore:start */
-            setTimeout(function() {
+            setTimeout(function(){
               console.error( err.stack || err );
               throw err;
             });

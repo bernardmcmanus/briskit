@@ -3,10 +3,10 @@ import AsyncProvider from 'async';
 
 export default fork();
 
-function Briskit() {
+function Briskit(){
   var $async = new AsyncProvider();
   var $stack = new Stack( true , $async );
-  var $briskit = function( cb ) {
+  var $briskit = function( cb ){
     $stack.enqueue( cb );
   };
   $briskit.defer = $stack.defer;
@@ -17,7 +17,7 @@ function Briskit() {
   return $briskit;
 }
 
-function fork() {
+function fork(){
   var briskit = new Briskit();
   briskit.stack = Stack;
   return briskit;
